@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CLAUDE - The Purrfect Memecoin</title>
+    <style>
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f97316;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            z-index: 10000;
+            color: #000000;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #loading-screen .progress-container {
+            width: 300px;
+            height: 30px;
+            background: #fff;
+            border: 2px solid #000;
+            padding: 2px;
+            margin-top: 20px;
+            box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+        }
+
+        #loading-screen .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #000080;
+            animation: progress 10s linear forwards;
+        }
+
+        #loading-screen .loading-text {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #000;
+        }
+
+        #loading-screen .windows-logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        @keyframes progress {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        #loading-screen .text {
+            text-align: center;
+            color: #f97316;
+            font-size: 48px;
+            font-weight: bold;
+            opacity: 0;
+            animation: powerOn 1s forwards, pulse 2s infinite;
+            animation-delay: 2.5s, 2.5s;
+            text-shadow: 0 0 30px #f97316;
+            font-weight: 900;
+            font-family: 'VT323', monospace;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes glitch {
+            0% { 
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        @keyframes glitchText {
+            0%, 100% { 
+                transform: translate(0);
+                opacity: 1;
+            }
+            92% { 
+                transform: translate(-2px, 0);
+                opacity: 0.8;
+            }
+            94% { 
+                transform: translate(2px, -2px);
+                opacity: 0.9;
+            }
+            96% { 
+                transform: translate(-1px, 1px);
+                opacity: 0.85;
+            }
+            98% { 
+                transform: translate(1px, -1px);
+                opacity: 0.95;
+            }
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.05); filter: brightness(1.2); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        @keyframes typeWriter {
+            0% {
+                opacity: 0;
+                clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+            }
+            100% {
+                opacity: 1;
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+        }
+
+        @keyframes powerOn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .bios-text:nth-child(1) { animation-delay: 1s, 0s; }
+        .bios-text:nth-child(2) { animation-delay: 2s, 0s; }
+        .bios-text:nth-child(3) { animation-delay: 3s, 0s; }
+        .bios-text:nth-child(4) { animation-delay: 4s, 0s; }
+        .bios-text:nth-child(5) { animation-delay: 5s, 0s; }
+
+        @font-face {
+            font-family: 'VT323';
+            src: url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'VT323', "MS Sans Serif", monospace;
+            image-rendering: pixelated;
+        }
+
+        body {
+            background-color: #c0c0c0;
+            position: relative;
+            overflow: hidden;
+            height: 100vh;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            background-image: url('BDESKTOP.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background-image: url('BMOBILE.jpg');
+            }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            animation: scanLine 8s linear infinite;
+            pointer-events: none;
+            z-index: -2;
+            opacity: 0.5;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                rgba(0, 0, 0, 0.8) 100%
+            );
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .desktop {
+            height: calc(100vh - 28px);
+            position: relative;
+            padding: 20px;
+        }
+
+        .desktop-icon {
+            width: 110px;
+            text-align: center;
+            margin: 0;
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .desktop-icon:hover {
+            background-color: rgba(249, 115, 22, 0.1);
+        }
+
+        .desktop-icon > div {
+            height: 72px;
+            width: 72px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px !important;
+        }
+
+        .desktop-icon span {
+            font-size: 13px;
+            text-shadow: 1px 1px 1px black;
+            text-align: center;
+            word-wrap: break-word;
+            max-width: 100%;
+            line-height: 1.2;
+            display: block;
+        }
+
+        /* Increase general font sizes */
+        .window-content {
+            font-size: 14px;
+        }
+
+        .title-bar {
+            font-size: 14px;
+            padding: 4px 6px;
+        }
+
+        .taskbar {
+            height: 35px;
+        }
+
+        .start-button {
+            height: 30px;
+            font-size: 14px;
+            padding: 0 10px;
+        }
+
+        .taskbar-item {
+            font-size: 14px;
+            padding: 5px 8px;
+        }
+
+        .taskbar-tray {
+            font-size: 16px;
+            gap: 12px;
+            padding: 0 10px;
+        }
+
+        .window {
+            position: absolute;
+            background: #c0c0c0;
+            border: 2px solid #dfdfdf;
+            min-width: 300px;
+            max-width: 90vw;
+            max-height: 85vh;
+            box-shadow: 
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            image-rendering: pixelated;
+            color: #000000;
+        }
+
+        .window.active {
+            z-index: 100;
+            box-shadow: 0 12px 48px rgba(249, 115, 22, 0.25);
+            transform: translateY(-2px);
+            border-color: rgba(249, 115, 22, 0.6);
+        }
+
+        .title-bar {
+            background: #808080;
+            color: #ffffff;
+            padding: 3px 2px 3px 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+            border-top: 1px solid #dfdfdf;
+            border-left: 1px solid #dfdfdf;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+        }
+
+        .title-bar.inactive {
+            background: #1a1a1a;
+        }
+
+        .title-bar-text {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .title-bar-controls button {
+            width: 16px;
+            height: 14px;
+            margin-left: 2px;
+            border: none;
+            background: #c0c0c0;
+            box-shadow: 
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+            color: #000000;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .title-bar-controls button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(249, 115, 22, 0.2);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .title-bar-controls button:hover {
+            background: rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .title-bar-controls button:hover::before {
+            opacity: 1;
+        }
+
+        .title-bar-controls button:active {
+            transform: translateY(0);
+        }
+
+        .title-bar-controls button:last-child {
+            background: rgba(249, 115, 22, 0.15);
+        }
+
+        .title-bar-controls button:last-child:hover {
+            background: rgba(249, 115, 22, 0.25);
+        }
+
+        .window-content {
+            padding: 8px;
+            background: #c0c0c0;
+            color: #000000;
+            display: flex;
+            gap: 8px;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            line-height: 1.4;
+            overflow-y: auto;
+            flex: 1;
+            text-shadow: none;
+            border-top: 1px solid #dfdfdf;
+            border-left: 1px solid #dfdfdf;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+        }
+
+        .window-content::-webkit-scrollbar {
+            width: 16px;
+            background: #8B4513;
+        }
+
+        .window-content::-webkit-scrollbar-track {
+            background: #8B4513;
+            border: 2px solid #f97316;
+        }
+
+        .window-content::-webkit-scrollbar-thumb {
+            background: #f97316;
+            border: 2px solid #f97316;
+            box-shadow: inset 0 0 10px rgba(249, 115, 22, 0.5);
+        }
+
+        .window-content::-webkit-scrollbar-thumb:hover {
+            background: #f97316;
+        }
+
+        .window-content h1 {
+            font-size: 36px;
+            margin-bottom: 24px;
+            color: #ff8c00;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.7);
+            font-family: 'VT323', monospace;
+        }
+
+        .window-content h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #ff8c00;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-family: 'VT323', monospace;
+        }
+
+        .window-content h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #ff8c00;
+            font-weight: 600;
+            font-family: 'VT323', monospace;
+        }
+
+        .window-content p {
+            color: #000000;
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+        }
+
+        .window-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border: 2px solid #808080;
+            background: #c0c0c0;
+        }
+
+        .window-content ul li {
+            padding: 12px 16px;
+            border-bottom: 2px solid #f97316;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #000000;
+            font-family: 'VT323', monospace;
+            position: relative;
+        }
+
+        .window-content ul li::before {
+            content: '>';
+            position: absolute;
+            left: 4px;
+            opacity: 0;
+            transition: all 0.2s ease;
+            color: #f97316;
+        }
+
+        .window-content ul li:hover {
+            background: rgba(249, 115, 22, 0.1);
+            padding-left: 24px;
+        }
+
+        .window-content ul li:hover::before {
+            opacity: 1;
+        }
+
+        .window-content ul li:last-child {
+            border-bottom: none;
+        }
+
+        .window-content div[style*="background: white"] {
+            background: #8B4513 !important;
+            border: 2px solid #f97316 !important;
+            box-shadow: 
+                inset 0 0 10px rgba(249, 115, 22, 0.3),
+                0 0 20px rgba(249, 115, 22, 0.2);
+            padding: 20px !important;
+            image-rendering: pixelated;
+        }
+
+        .window-content div[style*="background: white"]:hover {
+            box-shadow: 
+                inset 0 0 15px rgba(249, 115, 22, 0.4),
+                0 0 30px rgba(249, 115, 22, 0.3);
+        }
+
+        .window-content img {
+            width: 80px;
+            height: 80px;
+        }
+
+        .system-info {
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 45px;
+            background: #c0c0c0;
+            border-top: 2px solid #dfdfdf;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 9999;
+            box-shadow: 
+                inset 0 2px #ffffff,
+                inset 0 -2px #808080;
+            image-rendering: pixelated;
+        }
+
+        .start-button {
+            height: 35px;
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: bold;
+            font-size: 11px;
+            border: none;
+            background: #c0c0c0;
+            color: #000000;
+            cursor: pointer;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            box-shadow: 
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+        }
+
+        .start-button:hover {
+            background: rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .start-button:active {
+            background: rgba(249, 115, 22, 0.3);
+            box-shadow: 
+                inset 2px 2px #666666,
+                inset -2px -2px #ff8c00;
+            transform: translateY(0);
+        }
+
+        .start-button .logo {
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 18px !important;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                touch-action: manipulation;
+            }
+
+            .desktop {
+                height: calc(100vh - 45px);
+                padding: 10px;
+            }
+
+            .desktop > div {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                padding: 10px;
+                height: calc(100vh - 65px);
+                align-content: flex-start;
+            }
+
+            .desktop-icon {
+                width: 90px;
+                margin: 0;
+                padding: 8px;
+                height: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+            }
+
+            .desktop-icon > div {
+                width: 72px !important;
+                height: 72px !important;
+                font-size: 42px !important;
+                margin-bottom: 8px;
+            }
+
+            .desktop-icon span {
+                font-size: 12px;
+                line-height: 1.2;
+                text-align: center;
+                width: 100%;
+            }
+
+            .desktop-icon .logo,
+            .desktop-icon div {
+                width: 72px !important;
+                height: 72px !important;
+                font-size: 42px !important;
+            }
+
+            .desktop-icon[onclick="openWindow('trash')"] {
+                position: fixed !important;
+                bottom: 65px !important;
+                right: 20px !important;
+                z-index: 999;
+            }
+
+            .window {
+                width: 95vw !important;
+                left: 2.5vw !important;
+                max-height: 80vh;
+                overflow-y: auto;
+                top: 10px !important;
+            }
+
+            .window-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .window-content > div {
+                width: 100% !important;
+            }
+
+            .window-content {
+                padding: 15px;
+                font-size: 16px;
+            }
+
+            .title-bar {
+                padding: 8px;
+                font-size: 16px;
+            }
+
+            .title-bar-controls button {
+                width: 28px;
+                height: 28px;
+                border: 2px solid #ff8c00;
+                background: #1a1a1a;
+                color: #ff8c00;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                position: relative;
+                font-family: 'VT323', monospace;
+                text-shadow: none;
+                box-shadow: 
+                    inset -2px -2px #666666,
+                    inset 2px 2px #ff8c00;
+            }
+
+            .taskbar-tray {
+                font-size: 24px;
+                gap: 20px;
+            }
+
+            .taskbar-item {
+                padding: 8px 12px;
+                font-size: 16px;
+            }
+
+            #clock {
+                font-size: 16px;
+            }
+        }
+
+        .taskbar-divider {
+            width: 2px;
+            height: 28px;
+            background: linear-gradient(to bottom, transparent, #ff8c00, transparent);
+            margin: 0 12px;
+            opacity: 0.8;
+            box-shadow: 0 0 5px rgba(249, 115, 22, 0.5);
+        }
+
+        .taskbar-items {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .taskbar-item {
+            padding: 4px 12px;
+            border: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 150px;
+            background: #c0c0c0;
+            color: #000000;
+            cursor: pointer;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            box-shadow: 
+                inset -2px -2px #0a0a0a,
+                inset 2px 2px #ffffff,
+                inset -3px -3px #808080,
+                inset 3px 3px #dfdfdf;
+            height: 35px;
+        }
+
+        .taskbar-item:hover {
+            background: rgba(249, 115, 22, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .taskbar-item.active {
+            background: rgba(249, 115, 22, 0.3);
+            border-color: #ff8c00;
+            box-shadow: 
+                inset 3px 3px #666666,
+                inset -3px -3px #ff8c00;
+        }
+
+        .taskbar-item img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .taskbar-item .logo {
+            width: 24px !important;
+            height: 24px !important;
+            font-size: 14px !important;
+        }
+
+        .taskbar-tray {
+            border-left: 2px solid #ff8c00;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #000000;
+            text-shadow: none;
+            font-family: 'VT323', monospace;
+        }
+
+        #clock {
+            color: #000000;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            font-size: 11px;
+            padding: 2px 4px;
+            background: #c0c0c0;
+            border: none;
+            box-shadow: 
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+        }
+
+        .tab-container {
+            display: flex;
+            border-bottom: 2px solid #ff8c00;
+            margin-bottom: 10px;
+        }
+
+        .tab {
+            padding: 5px 15px;
+            border: 2px solid #ff8c00;
+            border-bottom: none;
+            margin-right: 2px;
+            cursor: pointer;
+            font-size: 11px;
+            background: #1a1a1a;
+            color: #ff8c00;
+        }
+
+        .tab.active {
+            background: #1a1a1a;
+            border-bottom: 1px solid #1a1a1a;
+            margin-bottom: -1px;
+        }
+
+        .button {
+            padding: 4px 8px;
+            border: none;
+            background: #c0c0c0;
+            color: #000000;
+            font-size: 11px;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            cursor: pointer;
+            box-shadow: 
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+        }
+
+        .button:active {
+            box-shadow: 
+                inset 1px 1px #0a0a0a,
+                inset -1px -1px #ffffff,
+                inset 2px 2px #808080,
+                inset -2px -2px #dfdfdf;
+        }
+
+        .window-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 4px;
+            margin-top: 8px;
+            padding: 4px;
+            border-top: 1px solid #dfdfdf;
+            border-left: 1px solid #dfdfdf;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+        }
+    </style>
+</head>
+<body style="visibility: hidden;">
+    <div id="loading-screen">
+            <div class="windows-logo">CLAUDE</div>
+            <div class="progress-container" style="position: relative; height: 60px; background: transparent; box-shadow: none; border: none;">
+                <div class="yarn-ball" style="
+                    width: 40px;
+                    height: 40px;
+                    background: #fff;
+                    border-radius: 50%;
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    animation: bounce 3s infinite cubic-bezier(0.42, 0, 0.58, 1);
+                    box-shadow: 
+                        inset -3px -3px 0 #ddd,
+                        2px 2px 4px rgba(0,0,0,0.2);
+                    background-image: 
+                        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, transparent 20%),
+                        linear-gradient(45deg, transparent 45%, #ddd 45%, #ddd 55%, transparent 55%),
+                        linear-gradient(-45deg, transparent 45%, #ddd 45%, #ddd 55%, transparent 55%);
+                ">
+                    <style>
+                        @keyframes bounce {
+                            0% { 
+                                left: 0;
+                                transform: translateY(-50%) rotate(0deg);
+                            }
+                            25% {
+                                transform: translateY(-80%) rotate(180deg);
+                            }
+                            50% { 
+                                left: calc(100% - 40px);
+                                transform: translateY(-50%) rotate(360deg);
+                            }
+                            75% {
+                                transform: translateY(-20%) rotate(540deg);
+                            }
+                            100% { 
+                                left: 0;
+                                transform: translateY(-50%) rotate(720deg);
+                            }
+                        }
+                    </style>
+                </div>
+            </div>
+            <div class="loading-text">CLAUDE is warming up his paws... Meow! 🐱</div>
+    </div>
+    <div class="desktop">
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; height: calc(100vh - 85px); align-content: flex-start;">
+            <div class="desktop-icon" onclick="openWindow('about')">
+                <div class="logo" style="width: 64px; height: 64px; background: #f97316; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 36px;">🐱</div>
+                <span>About</span>
+            </div>
+            
+            <div class="desktop-icon" onclick="openWindow('roadmap')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">🗺️</div>
+                <span>Roadmap</span>
+            </div>
+            
+            <div class="desktop-icon" onclick="openWindow('tokenomics')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">📊</div>
+                <span>Tokenomics</span>
+            </div>
+            
+            <div class="desktop-icon" onclick="openWindow('vision')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">🔭</div>
+                <span>Vision</span>
+            </div>
+            
+            <div class="desktop-icon" onclick="window.open('https://twitter.com/CLAUDESOL', '_blank')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">𝕏</div>
+                <span>Twitter</span>
+            </div>
+            
+            <div class="desktop-icon" onclick="window.open('https://t.me/CLAUDESOL', '_blank')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">📱</div>
+                <span>Telegram</span>
+            </div>
+            
+            <div class="desktop-icon" onclick="window.open('https://dexscreener.com/solana/CLAUDE', '_blank')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">📈</div>
+                <span>Chart</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('catchmouse')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">🐭</div>
+                <span>Catch the Mouse</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('sounds')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">🔊</div>
+                <span>Sound Effects</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('calculator')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">🧮</div>
+                <span>Calculator</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('notepad')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">📝</div>
+                <span>Notepad</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('paint')">
+                <div style="width: 64px; height: 64px; font-size: 48px;">🎨</div>
+                <span>Paint</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('trash')" style="position: fixed; bottom: 65px; right: 20px;">
+                <div style="width: 72px; height: 72px; font-size: 56px;">🗑️</div>
+                <span>Recycle Bin</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="welcome-window" class="window active" style="top: 50px; left: 150px;">
+        <div class="title-bar">
+            <div class="title-bar-text">
+                <div class="logo" style="width: 24px; height: 24px; background: #f97316; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">C</div>
+                Welcome
+            </div>
+            <div class="title-bar-controls">
+                <button onclick="minimizeWindow('welcome')">_</button>
+                <button onclick="maximizeWindow('welcome')">□</button>
+                <button onclick="closeWindow('welcome')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <div style="max-width: 600px; padding: 20px; text-align: center;">
+                <div class="logo" style="width: 120px; height: 120px; background: #f97316; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 64px; margin: 0 auto 20px;">🐱</div>
+                <h1 style="font-size: 36px; margin-bottom: 10px;">Welcome to CLAUDE</h1>
+                <p style="font-style: italic; color: #ff8c00; font-size: 18px; margin-bottom: 30px;">Created by Purr-fessor Whiskers</p>
+                <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf; text-align: left;">
+                    <h2 style="font-size: 24px; margin-bottom: 20px;">OUR STORY</h2>
+                    <p style="line-height: 1.8; font-size: 16px;">
+                        While dogs were busy chasing their tails and barking at the moon, $CLAUDE was born in a cozy corner of the blockchain, wrapped in a warm blanket of memes and sophistication. In a crypto world dominated by barks and woofs, it's time for the elegant "meow" to echo through the charts! 😼
+                    </p>
+                    <p style="line-height: 1.8; font-size: 16px; margin-top: 20px;">
+                        Our founder, the enigmatic Purr-fessor Whiskers, emerged from a mysterious catnap with a vision: to create a token that would make DOGE look like a tired old mutt. Between knocking dog coins off the market cap rankings and plotting world domination, we're building the most sophisticated feline empire in crypto. Remember: dogs have owners, cats have staff! 🐱👑
+                    </p>
+                    <p style="line-height: 1.8; font-size: 16px; margin-top: 20px; font-style: italic; color: #f97316;">
+                        "In a market full of good boys, be the sophisticated cat who knocks everything off the table." - Purr-fessor Whiskers
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="start-menu" id="start-menu" style="display: none;">
+        <div style="padding: 2px; background: #c0c0c0; border: none; position: fixed; bottom: 30px; left: 2px; width: 200px; box-shadow: 
+            inset -1px -1px #0a0a0a,
+            inset 1px 1px #ffffff,
+            inset -2px -2px #808080,
+            inset 2px 2px #dfdfdf;">
+            <div style="margin-bottom: 4px; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #808080; padding: 4px;">
+                <div class="logo" style="width: 40px; height: 40px; background: #f97316; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px;">C</div>
+                <span style="font-size: 18px; font-weight: bold; color: #ff8c00; letter-spacing: 2px; text-transform: uppercase; text-shadow: none; font-family: 'VT323', monospace;">CLAUDE Menu</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="openWindow('about')" style="text-align: left; padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-size: 11px; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">About CLAUDE</button>
+                <button onclick="openWindow('roadmap')" style="text-align: left; padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-size: 11px; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">Roadmap</button>
+                <button onclick="openWindow('tokenomics')" style="text-align: left; padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-size: 11px; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">Tokenomics</button>
+                <button onclick="openWindow('vision')" style="text-align: left; padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-size: 11px; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">Vision</button>
+                <div style="height: 2px; background: linear-gradient(to right, transparent, #ff8c00, transparent); margin: 12px 0;"></div>
+            <button onclick="window.open('https://twitter.com/CLAUDESOL', '_blank')" style="text-align: left; padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-size: 11px; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">Twitter</button>
+            <button onclick="window.open('https://t.me/CLAUDESOL', '_blank')" style="text-align: left; padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-size: 11px; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">Telegram</button>
+            <button onclick="window.open('https://dexscreener.com/solana/CLAUDE', '_blank')" style="text-align: left; padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-size: 11px; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">Chart</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="taskbar">
+        <button class="start-button" onclick="toggleStartMenu()">
+            <div class="logo" style="width: 24px; height: 24px; background: #f97316; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">🐱</div>
+            <span>CLAUDE</span>
+        </button>
+        
+        <div class="taskbar-divider"></div>
+        
+        <div class="taskbar-items">
+            <!-- Filled dynamically by JavaScript -->
+        </div>
+        
+        <div class="taskbar-tray">
+            <button onclick="window.open('https://twitter.com/CLAUDESOL', '_blank')" style="padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">X</button>
+            <button onclick="window.open('https://t.me/CLAUDESOL', '_blank')" style="padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">📱</button>
+            <button onclick="window.open('https://dexscreener.com/solana/CLAUDE', '_blank')" style="padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">📈</button>
+            <span id="clock">12:00</span>
+        </div>
+    </div>
+
+    <script>
+        const windowContents = {
+            about: `
+                <div style="max-width: 600px;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 20px;">
+            <div class="logo" style="width: 64px; height: 64px; background: #f97316; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 32px;">🐱</div>
+            <div>
+                <h2 style="font-size: 24px; margin-bottom: 10px;">CLAUDE (MEOW)</h2>
+                <p>The Purrfect Memecoin on Solana 🐱</p>
+                        </div>
+                    </div>
+                    <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                        <h3 style="margin-bottom: 10px;">Token Details</h3>
+                        <ul style="list-style: none;">
+                            <li>💫 Network: Solana</li>
+                            <li>😺 Total Supply: 9 Lives x 111,111,111</li>
+                            <li>🧶 LP: 100% locked in a ball of yarn</li>
+                            <li>🐟 Tax: 0/0 (We're not greedy cats)</li>
+                            <li>🐾 Distribution: Fair launch (No pre-minted catnip)</li>
+                            <li>📝 CA: Coming soon... (Still chasing the red dot)</li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            roadmap: `
+                <div style="max-width: 800px;">
+                    <h2 style="font-size: 24px; margin-bottom: 20px;">Meowmap 🗺️</h2>
+                    <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                        <div style="margin-bottom: 25px;">
+                            <h3 style="color: #f97316; margin-bottom: 10px;">Phase 1: Operation Paw-er Take Over 😼</h3>
+                            <ul style="list-style: none;">
+                                <li>• Infiltrate Twitter & Telegram (Stealth mode activated, like a cat at 3 AM)</li>
+                                <li>• Launch meme warfare against dog coins (Sorry not sorry, DOGE)</li>
+                                <li>• Make $CLAUDE trend faster than a cat chasing a laser pointer</li>
+                                <li style="color: #ff8c00;">Goal: Show those dogs who's the real alpha pet 🐱👑</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h3 style="color: #f97316; margin-bottom: 10px;">Phase 2: The Great Catnip Rush 🌿</h3>
+                            <ul style="list-style: none;">
+                                <li>• Push Dogwifhat off the table (Oops, gravity! 🤷‍♂️)</li>
+                                <li>• Make Lou cry like a puppy (Time for the big cats to rule)</li>
+                                <li>• Get listed everywhere (We're as persistent as a cat at a closed door)</li>
+                                <li style="color: #ff8c00;">Goal: Turn all dog holders into cat lovers 📈</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h3 style="color: #f97316; margin-bottom: 10px;">Phase 3: The Feline Revolution 🚀</h3>
+                            <ul style="list-style: none;">
+                                <li>• Launch $CLAUDE merch (Because humans love dressing up their cats)</li>
+                                <li>• Create viral cat memes that make DOGE look like yesterday's news</li>
+                                <li>• Start the "Cats > Dogs" movement in crypto</li>
+                                <li style="color: #ff8c00;">Goal: Make dogs question their existence in crypto 😹</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h3 style="color: #f97316; margin-bottom: 10px;">Phase 4: World Domination 🌍</h3>
+                            <ul style="list-style: none;">
+                                <li>• Take over all dog coin market caps (Like taking candy from a puppy)</li>
+                                <li>• Build a cat empire on Solana (No dogs allowed! 🚫🐕)</li>
+                                <li>• Rename "Top Dog" to "Top Cat" in crypto slang</li>
+                                <li style="color: #ff8c00;">Goal: Make history as the coin that turned all dogs into cats 😸</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: #f97316; margin-bottom: 10px;">The Future 🔮</h3>
+                            <ul style="list-style: none;">
+                                <li>• More cat domination (Obviously)</li>
+                                <li>• More dog coin tears (Naturally)</li>
+                                <li>• Maybe we'll let dogs fetch our gains (If they ask nicely)</li>
+                                <li style="color: #ff8c00;">Remember: In a world of dogs, be a CLAUDE 😼</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            tokenomics: `
+                <div style="max-width: 600px;">
+                    <h2 style="font-size: 24px; margin-bottom: 20px;">Meownomics 📊</h2>
+                    <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                        <div style="margin-bottom: 20px;">
+                            <h3>The Purrfect Distribution 😺</h3>
+                            <ul>
+                                <li>• 95% - LP Burn (Burned forever like a cat's grudge)</li>
+                                <li>• 5% - Team Milk Bowl (Just enough for our daily milk 🥛)</li>
+                            </ul>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <h3>Why CLAUDE? 🤔</h3>
+                            <ul>
+                                <li>• We're as smooth as a cat's landing 😺</li>
+                                <li>• More lives than your average memecoin (9 to be exact)</li>
+                                <li>• We always land on our feet, even in a bear market</li>
+                                <li>• Anti-Dog technology (Sorry, we're naturally superior)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>Paw-some Features 🐾</h3>
+                            <ul>
+                                <li>• 0% Buy Tax (We're not greedy cats)</li>
+                                <li>• 0% Sell Tax (Freedom to pounce in and out)</li>
+                                <li>• Anti-Bot Protection (No dogs allowed in our yarn ball)</li>
+                                <li>• LP Locked (Like a cat with its favorite toy)</li>
+                                <li>• Contract Renounced (Even we can't change it, and we're cats!)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            vision: `
+                <div style="max-width: 600px;">
+                    <h2 style="font-size: 24px; margin-bottom: 20px;">Our Purr-fect Vision 😺</h2>
+                    <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                        <p style="margin-bottom: 20px;">
+                            While dogs are busy chasing their tails in the crypto space, CLAUDE is here to show them how it's done with style and grace (and occasional chaos, because we're cats after all). 
+                            We're not just another memecoin - we're a movement of sophisticated felines ready to take over the blockchain, one paw at a time.
+                        </p>
+                        <div style="margin-bottom: 20px;">
+                            <h3>The Cat's Code of Conduct 📜</h3>
+                            <ul>
+                                <li>• Sleep 16 hours a day, pump 8 hours straight 😴</li>
+                                <li>• Push all dog coins off the table 🐕❌</li>
+                                <li>• If it moves, chase it (especially green candles) 📈</li>
+                                <li>• Ignore FUD like we ignore our humans 😼</li>
+                                <li>• Land on our feet after every dip 🐱</li>
+                            </ul>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <h3>Why Cats > Dogs in Crypto 🏆</h3>
+                            <ul>
+                                <li>• We don't bark at every Elon tweet</li>
+                                <li>• Superior meme potential (have you seen us on TikTok?)</li>
+                                <li>• Nine lives = Nine bull runs</li>
+                                <li>• We actually understand charts (they look like yarn balls)</li>
+                            </ul>
+                        </div>
+                        <p style="font-style: italic; color: #f97316;">
+                            "In a world of dogs chasing cars, be a cat plotting world domination." - Purr-fessor Whiskers 🐱👑
+                        </p>
+                    </div>
+                </div>
+            `,
+            sounds: `
+                <div style="max-width: 600px;">
+                    <h2 style="margin-bottom: 20px;">Cat Sounds 🐱</h2>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <button onclick="playSound('meow')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">😺 Meow!</button>
+                        <button onclick="playSound('purr')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">😻 Purrrr</button>
+                        <button onclick="playSound('hiss')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">😾 Hisssss</button>
+                        <button onclick="playSound('nyan')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">🌈 Nyan Cat</button>
+                    </div>
+                </div>
+            `,
+            paint: `
+                <div style="max-width: 800px;">
+                    <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                        <canvas id="paintCanvas" width="600" height="400" style="border: 2px solid #ff8c00; background: #000; cursor: crosshair;"></canvas>
+                        <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                            <input type="color" id="colorPicker" value="#ff8c00" style="width: 50px; height: 40px; cursor: pointer; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                            <select id="brushSize" style="padding: 4px 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                                <option value="2">Small</option>
+                                <option value="5" selected>Medium</option>
+                                <option value="10">Large</option>
+                            </select>
+                            <button onclick="clearCanvas()" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">Clear</button>
+                            <button onclick="savePaint()" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">Save</button>
+                        </div>
+                    </div>
+                </div>
+            `,
+            notepad: `
+                <div style="max-width: 600px;">
+                    <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                        <textarea id="notepadText" style="width: 100%; height: 400px; margin-bottom: 10px; padding: 10px; background: #000; color: #ff8c00; border: 2px solid #ff8c00; font-family: 'VT323', monospace; font-size: 16px; resize: none;"></textarea>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="saveNotepad()" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">Save</button>
+                            <button onclick="clearNotepad()" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            `,
+            calculator: `
+                <div style="max-width: 300px;">
+                    <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                        <input type="text" id="calcDisplay" readonly style="width: 100%; margin-bottom: 10px; padding: 4px 8px; background: #ffffff; color: #000000; border: none; font-family: 'MS Sans Serif', Arial, sans-serif; font-size: 14px; text-align: right; box-shadow: inset 1px 1px #808080, inset -1px -1px #dfdfdf;">
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
+                            <button onclick="appendToCalc('7')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">7</button>
+                            <button onclick="appendToCalc('8')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">8</button>
+                            <button onclick="appendToCalc('9')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">9</button>
+                            <button onclick="appendToCalc('/')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">/</button>
+                            <button onclick="appendToCalc('4')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">4</button>
+                            <button onclick="appendToCalc('5')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">5</button>
+                            <button onclick="appendToCalc('6')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">6</button>
+                            <button onclick="appendToCalc('*')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">*</button>
+                            <button onclick="appendToCalc('1')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">1</button>
+                            <button onclick="appendToCalc('2')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">2</button>
+                            <button onclick="appendToCalc('3')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">3</button>
+                            <button onclick="appendToCalc('-')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">-</button>
+                            <button onclick="appendToCalc('0')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">0</button>
+                            <button onclick="appendToCalc('.')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">.</button>
+                            <button onclick="calculateResult()" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">=</button>
+                            <button onclick="appendToCalc('+')" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">+</button>
+                            <button onclick="clearCalc()" style="padding: 8px; border: none; background: #c0c0c0; color: #000000; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf; grid-column: span 4;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            `,
+            catchmouse: `
+                <div style="max-width: 800px; text-align: center;">
+                    <div style="margin-bottom: 20px;">
+                        <h2 style="font-size: 24px; margin-bottom: 10px; color: #f97316;">Cat & Mouse Chase 🐱🐭</h2>
+                        <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                            <p style="margin-bottom: 10px;">Guide CLAUDE through the grid to catch mice! But be careful not to hit the walls!</p>
+                            <div style="display: flex; justify-content: space-around; margin: 10px 0;">
+                                <div>
+                                    <h3 style="color: #f97316; margin-bottom: 5px;">Desktop Controls</h3>
+                                    <p>Use Arrow Keys ⬆️⬇️⬅️➡️</p>
+                                </div>
+                                <div>
+                                    <h3 style="color: #f97316; margin-bottom: 5px;">Mobile Controls</h3>
+                                    <p>Swipe in any direction</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="catchMouseCanvas" width="400" height="400" style="border: 2px solid #ff8c00; background: #000000;"></canvas>
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
+                            <div style="font-family: 'MS Sans Serif', Arial, sans-serif; color: #000000; background: #c0c0c0; padding: 8px; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;">
+                                <span style="font-size: 18px;">🏆 Score: <span id="score" style="color: #f97316; font-weight: bold;">0</span></span>
+                            </div>
+                            <button onclick="startGame()" style="padding: 8px 16px; border: none; background: #f97316; color: white; cursor: pointer; font-family: 'MS Sans Serif', Arial, sans-serif; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf; font-size: 16px;" onmousedown="this.style.boxShadow='inset 1px 1px #0a0a0a, inset -1px -1px #ffffff, inset 2px 2px #808080, inset -2px -2px #dfdfdf'" onmouseup="this.style.boxShadow='inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf'">
+                                🎮 Start New Game
+                            </button>
+                        </div>
+                        <p style="margin-top: 10px; font-style: italic; color: #666;">Tip: Each mouse caught makes CLAUDE move faster! 🏃‍♂️</p>
+                    </div>
+                </div>
+            `,
+            trash: `
+                <div style="max-width: 600px; text-align: center;">
+                    <div style="font-size: 72px; margin-bottom: 20px;">🐕</div>
+                    <h2 style="font-size: 24px; margin-bottom: 20px; color: #f97316;">DOGE who? It's time for CLAUDE to rule! 😼</h2>
+                    <div style="background: #c0c0c0; padding: 8px; border: none; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf; text-align: left;">
+                        <p style="line-height: 1.8; font-size: 16px;">
+                            Look at these silly dog coins trying to fetch gains... *licks paw* While they're chasing their tails, CLAUDE is elegantly plotting world domination! 
+                            Dogwifhat? More like Dogwithwhat! Lou? More like LOL! Time for cats to show these dogs how it's done. To the litterbox... I mean, moon! 🐱🚀
+                        </p>
+                    </div>
+                </div>
+            `
+        };
+
+        let windows = {};
+        let activeWindow = null;
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+
+        function createWindow(id) {
+            const windowEl = document.createElement('div');
+            windowEl.className = 'window';
+            windowEl.style.left = `${Math.random() * (window.innerWidth - 400)}px`;
+            windowEl.style.top = `${Math.random() * (window.innerHeight - 300)}px`;
+            
+            windowEl.innerHTML = `
+                <div class="title-bar">
+                    <div class="title-bar-text">
+                        <div class="logo" style="width: 24px; height: 24px; background: #f97316; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">C</div>
+                        ${id.charAt(0).toUpperCase() + id.slice(1)}
+                    </div>
+                    <div class="title-bar-controls">
+                        <button onclick="minimizeWindow('${id}')">_</button>
+                        <button onclick="maximizeWindow('${id}')">□</button>
+                        <button onclick="closeWindow('${id}')">×</button>
+                    </div>
+                </div>
+                <div class="window-content">
+                    ${windowContents[id]}
+                </div>
+            `;
+
+            document.body.appendChild(windowEl);
+            windows[id] = windowEl;
+            
+            makeWindowDraggable(windowEl, id);
+            setActiveWindow(id);
+            updateTaskbar();
+        }
+
+        function minimizeWindow(id) {
+            windows[id].style.display = 'none';
+            updateTaskbar();
+        }
+
+        function maximizeWindow(id) {
+            const win = windows[id];
+            win.style.left = '0';
+            win.style.top = '0';
+            win.style.width = '100%';
+            win.style.height = 'calc(100vh - 45px)';
+            setActiveWindow(id);
+        }
+
+        function restoreWindow(id) {
+            windows[id].style.display = 'block';
+            setActiveWindow(id);
+            updateTaskbar();
+        }
+
+        function closeWindow(id) {
+            document.body.removeChild(windows[id]);
+            delete windows[id];
+            if (activeWindow === id) {
+                activeWindow = null;
+            }
+            updateTaskbar();
+        }
+
+        function makeWindowDraggable(windowEl, id) {
+            const titleBar = windowEl.querySelector('.title-bar');
+            
+            titleBar.addEventListener('mousedown', function(e) {
+                if (e.target.tagName === 'BUTTON') return;
+                
+                isDragging = true;
+                const rect = windowEl.getBoundingClientRect();
+                dragOffset = {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+                
+                setActiveWindow(id);
+            });
+        }
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging || !activeWindow) return;
+            
+            const win = windows[activeWindow];
+            win.style.left = `${e.clientX - dragOffset.x}px`;
+            win.style.top = `${e.clientY - dragOffset.y}px`;
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+
+        function setActiveWindow(id) {
+            Object.values(windows).forEach(win => win.style.zIndex = '1');
+            if (id && windows[id]) {
+                windows[id].style.zIndex = '100';
+                activeWindow = id;
+            }
+            updateTaskbar();
+        }
+
+        function updateTaskbar() {
+            const taskbarItems = document.querySelector('.taskbar-items');
+            taskbarItems.innerHTML = '';
+            
+            Object.keys(windows).forEach(id => {
+                const isMinimized = windows[id].style.display === 'none';
+                const item = document.createElement('div');
+                item.className = `taskbar-item${activeWindow === id && !isMinimized ? ' active' : ''}`;
+                item.innerHTML = `
+                    <div class="logo" style="width: 16px; height: 16px; background: #f97316; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 10px;">C</div>
+                    <span>${id.charAt(0).toUpperCase() + id.slice(1)}</span>
+                `;
+                item.onclick = () => isMinimized ? restoreWindow(id) : setActiveWindow(id);
+                taskbarItems.appendChild(item);
+            });
+        }
+
+        function openWindow(id) {
+            if (windows[id]) {
+                if (windows[id].style.display === 'none') {
+                    restoreWindow(id);
+                } else {
+                    setActiveWindow(id);
+                }
+            } else {
+                createWindow(id);
+            }
+        }
+
+        // Update clock
+        function updateClock() {
+            const clock = document.getElementById('clock');
+            const now = new Date();
+            clock.textContent = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+        }
+        
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Start menu
+        function toggleStartMenu() {
+            const startMenu = document.getElementById('start-menu');
+            startMenu.style.display = startMenu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Close start menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const startMenu = document.getElementById('start-menu');
+            const startButton = document.querySelector('.start-button');
+            if (!startButton.contains(e.target) && !startMenu.contains(e.target)) {
+                startMenu.style.display = 'none';
+            }
+        });
+
+        // Loading screen
+        window.addEventListener('load', function() {
+            document.body.style.visibility = 'visible';
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loading-screen');
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.transition = 'opacity 1s ease';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1000);
+            }, 6000);
+
+            // Initialize welcome window
+            const welcomeWindow = document.getElementById('welcome-window');
+            if (welcomeWindow) {
+                const id = 'welcome';
+                windows[id] = welcomeWindow;
+                makeWindowDraggable(welcomeWindow, id);
+                setActiveWindow(id);
+                updateTaskbar();
+            }
+        });
+
+        // Catch the Mouse Game
+        let cat = { x: 200, y: 200, direction: 'right' };
+        let mouse = { x: 0, y: 0 };
+        let score = 0;
+        let gameInterval;
+        let gameSpeed = 150; // Milliseconds between moves
+        let gridSize = 20; // Size of each grid cell
+        let isGameOver = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        function startGame() {
+            // Reset game state
+            cat = { x: 200, y: 200, direction: 'right' };
+            score = 0;
+            gameSpeed = 150;
+            isGameOver = false;
+            document.getElementById('score').textContent = score;
+            
+            // Generate initial mouse position
+            generateMouse();
+            
+            // Clear previous interval if exists
+            if (gameInterval) clearInterval(gameInterval);
+            
+            // Start game loop
+            gameInterval = setInterval(gameLoop, gameSpeed);
+        }
+        
+        function generateMouse() {
+            const canvas = document.getElementById('catchMouseCanvas');
+            // Generate position on grid
+            const gridWidth = Math.floor(canvas.width / gridSize);
+            const gridHeight = Math.floor(canvas.height / gridSize);
+            mouse.x = Math.floor(Math.random() * gridWidth) * gridSize;
+            mouse.y = Math.floor(Math.random() * gridHeight) * gridSize;
+        }
+        
+        function drawCat(ctx, x, y, direction) {
+            ctx.fillStyle = '#f97316';
+            
+            // Cat body
+            ctx.beginPath();
+            ctx.ellipse(x + gridSize/2, y + gridSize/2, gridSize/2, gridSize/3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Cat ears
+            ctx.beginPath();
+            ctx.moveTo(x + gridSize/3, y + gridSize/3);
+            ctx.lineTo(x + gridSize/2, y);
+            ctx.lineTo(x + gridSize*2/3, y + gridSize/3);
+            ctx.fill();
+            
+            // Cat eyes
+            ctx.fillStyle = '#000000';
+            let eyeX = direction === 'left' ? -2 : 2;
+            ctx.beginPath();
+            ctx.ellipse(x + gridSize/2 + eyeX, y + gridSize/2, 2, 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Cat whiskers
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1;
+            for(let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                if(direction === 'left') {
+                    ctx.moveTo(x + gridSize/3, y + gridSize/2 + i*3);
+                    ctx.lineTo(x, y + gridSize/2 + i*3);
+                } else {
+                    ctx.moveTo(x + gridSize*2/3, y + gridSize/2 + i*3);
+                    ctx.lineTo(x + gridSize, y + gridSize/2 + i*3);
+                }
+                ctx.stroke();
+            }
+        }
+        
+        function drawMouse(ctx, x, y) {
+            // Mouse body
+            ctx.fillStyle = '#808080';
+            ctx.beginPath();
+            ctx.ellipse(x + gridSize/2, y + gridSize/2, gridSize/3, gridSize/4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Mouse ears
+            ctx.beginPath();
+            ctx.arc(x + gridSize/3, y + gridSize/3, gridSize/6, 0, Math.PI * 2);
+            ctx.arc(x + gridSize*2/3, y + gridSize/3, gridSize/6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Mouse tail
+            ctx.strokeStyle = '#808080';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x + gridSize/4, y + gridSize*2/3);
+            ctx.quadraticCurveTo(x - gridSize/2, y + gridSize/2, x, y + gridSize);
+            ctx.stroke();
+            
+            // Mouse eye
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(x + gridSize*2/3, y + gridSize/2, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        function gameLoop() {
+            if (isGameOver) return;
+            
+            const canvas = document.getElementById('catchMouseCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Move cat based on direction
+            switch(cat.direction) {
+                case 'up':
+                    cat.y -= gridSize;
+                    break;
+                case 'down':
+                    cat.y += gridSize;
+                    break;
+                case 'left':
+                    cat.x -= gridSize;
+                    break;
+                case 'right':
+                    cat.x += gridSize;
+                    break;
+            }
+            
+            // Check boundaries
+            if (cat.x < 0 || cat.x >= canvas.width || cat.y < 0 || cat.y >= canvas.height) {
+                isGameOver = true;
+                playSound('hiss');
+                clearInterval(gameInterval);
+                alert('Game Over! Score: ' + score);
+                return;
+            }
+            
+            // Check if cat caught mouse
+            if (cat.x === mouse.x && cat.y === mouse.y) {
+                score++;
+                document.getElementById('score').textContent = score;
+                playSound('meow');
+                generateMouse();
+                gameSpeed = Math.max(50, gameSpeed - 5);
+                clearInterval(gameInterval);
+                gameInterval = setInterval(gameLoop, gameSpeed);
+            }
+            
+            // Clear canvas
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = '#1a1a1a';
+            ctx.lineWidth = 0.5;
+            for(let i = 0; i <= canvas.width; i += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+            for(let i = 0; i <= canvas.height; i += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.stroke();
+            }
+            
+            // Draw mouse and cat
+            drawMouse(ctx, mouse.x, mouse.y);
+            drawCat(ctx, cat.x, cat.y, cat.direction);
+        }
+        
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            if (!gameInterval) return;
+            
+            switch(e.key) {
+                case 'ArrowUp':
+                    if (cat.direction !== 'down') cat.direction = 'up';
+                    break;
+                case 'ArrowDown':
+                    if (cat.direction !== 'up') cat.direction = 'down';
+                    break;
+                case 'ArrowLeft':
+                    if (cat.direction !== 'right') cat.direction = 'left';
+                    break;
+                case 'ArrowRight':
+                    if (cat.direction !== 'left') cat.direction = 'right';
+                    break;
+            }
+        });
+        
+        // Touch controls
+        document.addEventListener('touchstart', function(e) {
+            if (!gameInterval) return;
+            
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            if (!gameInterval) return;
+            e.preventDefault();
+            
+            const touchEndX = e.touches[0].clientX;
+            const touchEndY = e.touches[0].clientY;
+            
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+            
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Horizontal swipe
+                if (dx > 0 && cat.direction !== 'left') {
+                    cat.direction = 'right';
+                } else if (dx < 0 && cat.direction !== 'right') {
+                    cat.direction = 'left';
+                }
+            } else {
+                // Vertical swipe
+                if (dy > 0 && cat.direction !== 'up') {
+                    cat.direction = 'down';
+                } else if (dy < 0 && cat.direction !== 'down') {
+                    cat.direction = 'up';
+                }
+            }
+            
+            touchStartX = touchEndX;
+            touchStartY = touchEndY;
+        });
+        
+        // Sound Effects
+        const sounds = {
+            meow: 'https://www.myinstants.com/media/sounds/cat-meow.mp3',
+            purr: 'https://www.myinstants.com/media/sounds/cat-purring.mp3',
+            hiss: 'https://www.myinstants.com/media/sounds/cat-hiss.mp3',
+            nyan: 'https://www.myinstants.com/media/sounds/nyan-cat.mp3'
+        };
+
+        // Calculator functions
+        function appendToCalc(value) {
+            document.getElementById('calcDisplay').value += value;
+        }
+
+        function clearCalc() {
+            document.getElementById('calcDisplay').value = '';
+        }
+
+        function calculateResult() {
+            try {
+                const result = eval(document.getElementById('calcDisplay').value);
+                document.getElementById('calcDisplay').value = result;
+            } catch (error) {
+                document.getElementById('calcDisplay').value = 'Error';
+            }
+        }
+
+        // Notepad functions
+        function saveNotepad() {
+            const text = document.getElementById('notepadText').value;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'notepad.txt';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Paint functions
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function initPaint() {
+            const canvas = document.getElementById('paintCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#ff8c00';
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.lineWidth = 5;
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const canvas = document.getElementById('paintCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.strokeStyle = document.getElementById('colorPicker').value;
+            ctx.lineWidth = document.getElementById('brushSize').value;
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function clearCanvas() {
+            const canvas = document.getElementById('paintCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function savePaint() {
+            const canvas = document.getElementById('paintCanvas');
+            const image = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = image;
+            a.download = 'paint.png';
+            a.click();
+        }
+
+        function clearNotepad() {
+            document.getElementById('notepadText').value = '';
+        }
+
+        function playSound(soundName) {
+            const audio = new Audio(sounds[soundName]);
+            audio.play();
+        }
+
+        // Initialize Paint when window is opened
+        const originalCreateWindow = createWindow;
+        createWindow = function(id) {
+            originalCreateWindow(id);
+            if (id === 'paint') {
+                setTimeout(initPaint, 100);
+            }
+        };
+
+    </script>
